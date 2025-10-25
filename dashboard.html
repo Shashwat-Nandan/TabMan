@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabMan Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>TabMan Dashboard</h1>
+      <p class="subtitle">Manage your saved tabs</p>
+    </header>
+
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="Search tabs...">
+      <select id="categoryFilter">
+        <option value="all">All Categories</option>
+      </select>
+    </div>
+
+    <div id="tabsContainer">
+      <table id="tabsTable">
+        <thead>
+          <tr>
+            <th>Favicon</th>
+            <th>Title</th>
+            <th>URL</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Date Added</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tabsBody">
+          <!-- Tabs will be inserted here dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <p>No tabs saved yet!</p>
+      <p class="hint">Right-click on any webpage and select "Add to TabMan" to get started.</p>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Edit Tab Details</h2>
+      <form id="editForm">
+        <div class="form-group">
+          <label for="editCategory">Category:</label>
+          <input type="text" id="editCategory" list="categories" required>
+          <datalist id="categories">
+            <option value="Work">
+            <option value="Personal">
+            <option value="Research">
+            <option value="Shopping">
+            <option value="Entertainment">
+          </datalist>
+        </div>
+        <div class="form-group">
+          <label for="editDescription">Description:</label>
+          <textarea id="editDescription" rows="3"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Save</button>
+          <button type="button" class="btn-secondary" id="cancelEdit">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
