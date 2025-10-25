@@ -80,6 +80,9 @@ function renderTabs(tabs) {
 
 // Setup event listeners
 function setupEventListeners() {
+  // Save current tab button
+  document.getElementById('saveCurrentTab').addEventListener('click', handleSaveCurrentTab);
+
   // Search functionality
   document.getElementById('searchInput').addEventListener('input', handleSearch);
 
@@ -205,6 +208,68 @@ async function handleDelete(event) {
 function handleOpen(event) {
   const url = event.target.dataset.url;
   chrome.tabs.create({ url: url });
+}
+
+// Handle save current tab button click
+async function handleSaveCurrentTab() {
+  try {
+    // Get the current active tab
+    const [currentTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    if (!currentTab) {
+      console.error('No active tab found');
+      return;
+    }
+
+    // Create tab data
+    const tabData = {
+      id: Date.now(),
+      url: currentTab.url,
+      title: currentTab.title,
+      favIconUrl: currentTab.favIconUrl || '',
+      category: 'Uncategorized',
+      description: '',
+      dateAdded: new Date().toISOString()
+    };
+
+    // Get existing tabs and add new one
+    const result = await chrome.storage.local.get(['savedTabs']);
+    const tabs = result.savedTabs || [];
+    tabs.push(tabData);
+
+    // Save back to storage
+    await chrome.storage.local.set({ savedTabs: tabs });
+
+    // Update local state and re-render
+    savedTabs = tabs;
+    renderTabs(savedTabs);
+    updateCategoryFilter();
+
+    // Show visual feedback
+    const button = document.getElementById('saveCurrentTab');
+    const originalText = button.innerHTML;
+    button.innerHTML = '✅ Saved!';
+    button.style.background = '#4CAF50';
+
+    setTimeout(() => {
+      button.innerHTML = originalText;
+      button.style.background = '';
+    }, 2000);
+
+  } catch (error) {
+    console.error('Error saving current tab:', error);
+
+    // Show error feedback
+    const button = document.getElementById('saveCurrentTab');
+    const originalText = button.innerHTML;
+    button.innerHTML = '❌ Error';
+    button.style.background = '#f44336';
+
+    setTimeout(() => {
+      button.innerHTML = originalText;
+      button.style.background = '';
+    }, 2000);
+  }
 }
 
 // Utility functions

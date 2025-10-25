@@ -4,7 +4,17 @@ A Chrome extension that helps you manage and organize your browser tabs with cat
 
 ## Features
 
-- **Right-click Context Menu**: Add any webpage to TabMan by right-clicking and selecting "Add to TabMan"
+- **Universal Tab Support**: Works on ALL tab types including:
+  - Google Docs, Sheets, Slides
+  - PDFs (both web and local)
+  - Images, videos, and media files
+  - All regular webpages
+  - Special pages (with extension icon click)
+- **Multiple Save Methods**:
+  - Right-click context menu: "Add to TabMan"
+  - Extension icon: Click to save current tab or view dashboard
+  - "Save Current Tab" button in dashboard
+  - Keyboard shortcut: Ctrl+Shift+S (Cmd+Shift+S on Mac)
 - **Persistent Storage**: All saved tabs remain available even after closing the browser
 - **Organized Dashboard**: View all saved tabs in a clean, tabular format with:
   - Website favicon
@@ -56,10 +66,23 @@ The test suite covers:
 
 ### Adding Tabs
 
+**Method 1: Right-click Context Menu (works on most pages)**
 1. Navigate to any webpage you want to save
 2. Right-click anywhere on the page
 3. Select "Add to TabMan" from the context menu
 4. The tab is now saved and can be viewed in the dashboard
+
+**Method 2: Save Current Tab Button**
+1. Click the TabMan extension icon in your toolbar
+2. Click the "💾 Save Current Tab" button in the dashboard
+3. Works on ALL tab types including Google Docs, PDFs, etc.
+
+**Method 3: Keyboard Shortcut**
+- Windows/Linux: `Ctrl+Shift+S`
+- Mac: `Cmd+Shift+S`
+- Opens the dashboard popup (then use "Save Current Tab" button)
+
+**Note**: For special pages like `chrome://` or extension pages, use the "Save Current Tab" button in the dashboard.
 
 ### Viewing Saved Tabs
 

@@ -1,12 +1,16 @@
 {
   "manifest_version": 3,
   "name": "TabMan - Multi Tab Manager",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Manage and organize your browser tabs with categories and descriptions",
   "permissions": [
     "contextMenus",
     "storage",
-    "tabs"
+    "tabs",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "<all_urls>"
   ],
   "action": {
     "default_popup": "dashboard.html",
@@ -14,7 +18,8 @@
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
-    }
+    },
+    "default_title": "TabMan - Save current tab or view saved tabs"
   },
   "background": {
     "service_worker": "background.js"
@@ -23,5 +28,14 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Save current tab to TabMan"
+    }
   }
 }
