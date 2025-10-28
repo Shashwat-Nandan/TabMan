@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - TabMan Multi Tab Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .last-updated {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        h2 {
+            color: #764ba2;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        p, li {
+            margin-bottom: 10px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        strong {
+            color: #667eea;
+        }
+
+        .summary {
+            background: #f7f7f7;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            margin-top: 30px;
+            border-radius: 5px;
+        }
+
+        .summary h2 {
+            margin-top: 0;
+        }
+
+        .summary ul {
+            margin-top: 15px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 30px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Privacy Policy for TabMan - Multi Tab Manager</h1>
+        <p class="last-updated"><strong>Last Updated:</strong> October 26, 2025</p>
+
+        <h2>Introduction</h2>
+        <p>TabMan ("we," "our," or "the extension") is committed to protecting your privacy. This Privacy Policy explains how TabMan handles your information when you use our Chrome extension.</p>
+
+        <h2>Information We Collect</h2>
+        <p>TabMan collects and stores the following information <strong>locally on your device only</strong>:</p>
+        <ul>
+            <li><strong>Tab URLs:</strong> The web addresses of tabs you choose to save</li>
+            <li><strong>Page Titles:</strong> The titles of saved tabs</li>
+            <li><strong>Favicon URLs:</strong> Small icons associated with websites</li>
+            <li><strong>Categories:</strong> Categories you assign to saved tabs (e.g., "Work", "Personal")</li>
+            <li><strong>Descriptions:</strong> Custom descriptions you add to saved tabs</li>
+            <li><strong>Timestamps:</strong> Date and time when tabs were saved</li>
+        </ul>
+
+        <h2>How We Store Your Data</h2>
+        <ul>
+            <li><strong>Local Storage Only:</strong> All data is stored locally on your device using Chrome's chrome.storage.local API</li>
+            <li><strong>No Cloud Sync:</strong> We do not transmit, upload, or sync your data to any external servers</li>
+            <li><strong>No Remote Access:</strong> We cannot access your saved tabs or any other data</li>
+            <li><strong>Device-Specific:</strong> Your data remains on your device and is not shared across devices</li>
+        </ul>
+
+        <h2>How We Use Your Data</h2>
+        <p>The information collected is used solely to:</p>
+        <ul>
+            <li>Display your saved tabs in the dashboard</li>
+            <li>Allow you to organize tabs with categories and descriptions</li>
+            <li>Enable search and filtering of your saved tabs</li>
+            <li>Reopen saved tabs when you click on them</li>
+        </ul>
+
+        <h2>Data Sharing and Third Parties</h2>
+        <ul>
+            <li><strong>No Data Sharing:</strong> We do not share, sell, rent, or transmit your data to any third parties</li>
+            <li><strong>No Analytics:</strong> We do not use analytics services or tracking tools</li>
+            <li><strong>No Advertisements:</strong> We do not display ads or share data with advertisers</li>
+            <li><strong>No External Services:</strong> The extension operates entirely offline and does not communicate with external servers</li>
+        </ul>
+
+        <h2>Permissions Explanation</h2>
+        <p>TabMan requires the following permissions:</p>
+        <ul>
+            <li><strong>contextMenus:</strong> To add the "Add to TabMan" option in right-click menus</li>
+            <li><strong>storage:</strong> To save your tabs locally on your device</li>
+            <li><strong>tabs:</strong> To access tab information (title, URL) when you save tabs</li>
+            <li><strong>activeTab:</strong> To retrieve information from the currently active tab</li>
+            <li><strong>host_permissions (&lt;all_urls&gt;):</strong> To access tab metadata from any website you choose to save</li>
+        </ul>
+        <p>These permissions are used <strong>only</strong> for the functionality described and nothing else.</p>
+
+        <h2>User Control and Data Deletion</h2>
+        <p>You have complete control over your data:</p>
+        <ul>
+            <li><strong>Delete Individual Tabs:</strong> Remove any saved tab using the "Delete" button in the dashboard</li>
+            <li><strong>Clear All Data:</strong> Uninstalling the extension removes all stored data from your device</li>
+            <li><strong>Manual Deletion:</strong> You can also clear extension data via Chrome settings: chrome://extensions/ → TabMan → "Remove extension"</li>
+        </ul>
+
+        <h2>Data Security</h2>
+        <ul>
+            <li>All data is stored securely using Chrome's built-in storage API</li>
+            <li>Data is protected by your device's security measures</li>
+            <li>No data is transmitted over the internet</li>
+            <li>We implement XSS (Cross-Site Scripting) prevention in our code</li>
+        </ul>
+
+        <h2>Children's Privacy</h2>
+        <p>TabMan does not knowingly collect any information from users. The extension is suitable for users of all ages as it only stores tab information locally without any external data collection.</p>
+
+        <h2>Changes to This Privacy Policy</h2>
+        <p>We may update this Privacy Policy from time to time. Any changes will be reflected in the "Last Updated" date at the top of this document. Continued use of TabMan after changes constitutes acceptance of the updated policy.</p>
+
+        <h2>Open Source and Transparency</h2>
+        <p>TabMan's source code is available for review, ensuring complete transparency about how the extension operates and handles data.</p>
+
+        <h2>Contact Information</h2>
+        <p>For questions or concerns about this Privacy Policy or TabMan's data practices, please:</p>
+        <ul>
+            <li>Review the source code for technical details</li>
+            <li>Open an issue on the project's repository</li>
+            <li>Contact the developer at: [Your Email Address]</li>
+        </ul>
+
+        <h2>Your Consent</h2>
+        <p>By using TabMan, you consent to this Privacy Policy and agree to its terms.</p>
+
+        <div class="summary">
+            <h2>Summary</h2>
+            <p><strong>In Simple Terms:</strong></p>
+            <ul>
+                <li>TabMan saves tab information <strong>only on your device</strong></li>
+                <li>We <strong>never</strong> send your data anywhere</li>
+                <li>We <strong>never</strong> track you or collect analytics</li>
+                <li>You can delete your data anytime by uninstalling the extension</li>
+                <li>We have <strong>no access</strong> to your information</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>This privacy policy is accurate as of the publication date. TabMan is a local-only extension that prioritizes user privacy by design.</p>
+        </div>
+    </div>
+</body>
+</html>
