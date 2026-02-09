@@ -1,6 +1,8 @@
 // Global variables
 let savedTabs = [];
 let currentEditId = null;
+let currentView = 'grid';
+let currentSort = 'newest';
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', async () => {
@@ -13,18 +15,71 @@ async function loadTabs() {
   try {
     const result = await chrome.storage.local.get(['savedTabs']);
     savedTabs = result.savedTabs || [];
-    renderTabs(savedTabs);
+    applyFiltersAndRender();
     updateCategoryFilter();
   } catch (error) {
     console.error('Error loading tabs:', error);
   }
 }
 
-// Render tabs in the table
+// Apply current search, category filter, and sort, then render
+function applyFiltersAndRender() {
+  const searchTerm = (document.getElementById('searchInput').value || '').toLowerCase();
+  const categoryFilter = document.getElementById('categoryFilter').value;
+
+  let filtered = savedTabs.filter(tab => {
+    const matchesSearch = !searchTerm ||
+      tab.title.toLowerCase().includes(searchTerm) ||
+      tab.url.toLowerCase().includes(searchTerm) ||
+      (tab.description || '').toLowerCase().includes(searchTerm);
+
+    const matchesCategory = categoryFilter === 'all' || tab.category === categoryFilter;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  filtered = sortTabs(filtered, currentSort);
+  renderTabs(filtered);
+  updateTabCount(filtered.length);
+}
+
+// Sort tabs
+function sortTabs(tabs, sortBy) {
+  const sorted = [...tabs];
+  switch (sortBy) {
+    case 'newest':
+      sorted.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+      break;
+    case 'oldest':
+      sorted.sort((a, b) => new Date(a.dateAdded) - new Date(b.dateAdded));
+      break;
+    case 'title-az':
+      sorted.sort((a, b) => a.title.localeCompare(b.title));
+      break;
+    case 'title-za':
+      sorted.sort((a, b) => b.title.localeCompare(a.title));
+      break;
+    case 'category':
+      sorted.sort((a, b) => a.category.localeCompare(b.category));
+      break;
+  }
+  return sorted;
+}
+
+// Update tab count display
+function updateTabCount(visibleCount) {
+  const tabCountEl = document.getElementById('tabCount');
+  if (visibleCount === savedTabs.length) {
+    tabCountEl.textContent = `${savedTabs.length} tab${savedTabs.length !== 1 ? 's' : ''}`;
+  } else {
+    tabCountEl.textContent = `${visibleCount} of ${savedTabs.length} tabs`;
+  }
+}
+
+// Render tabs as cards
 function renderTabs(tabs) {
-  const tabsBody = document.getElementById('tabsBody');
-  const emptyState = document.getElementById('emptyState');
   const tabsContainer = document.getElementById('tabsContainer');
+  const emptyState = document.getElementById('emptyState');
 
   if (tabs.length === 0) {
     tabsContainer.style.display = 'none';
@@ -32,35 +87,41 @@ function renderTabs(tabs) {
     return;
   }
 
-  tabsContainer.style.display = 'block';
+  tabsContainer.style.display = '';
   emptyState.style.display = 'none';
 
-  tabsBody.innerHTML = tabs.map(tab => {
+  tabsContainer.innerHTML = tabs.map((tab, index) => {
     const date = new Date(tab.dateAdded).toLocaleDateString();
     const favicon = tab.favIconUrl
-      ? `<img src="${tab.favIconUrl}" alt="" class="favicon">`
-      : '<div class="favicon-placeholder">🔖</div>';
+      ? `<img src="${escapeHtml(tab.favIconUrl)}" alt="" onerror="this.parentElement.innerHTML='<span class=\\'card-favicon-placeholder\\'>&#x1F310;</span>'">`
+      : '<span class="card-favicon-placeholder">&#x1F310;</span>';
+
+    const description = tab.description
+      ? `<div class="card-description" title="${escapeHtml(tab.description)}">${escapeHtml(tab.description)}</div>`
+      : '';
 
     return `
-      <tr data-id="${tab.id}">
-        <td class="favicon-cell">${favicon}</td>
-        <td class="title-cell">${escapeHtml(tab.title)}</td>
-        <td class="url-cell">
-          <a href="${escapeHtml(tab.url)}" target="_blank" title="${escapeHtml(tab.url)}">
-            ${truncateUrl(tab.url)}
-          </a>
-        </td>
-        <td class="category-cell">
+      <div class="tab-card" data-id="${tab.id}" style="animation-delay: ${index * 0.03}s">
+        <div class="card-header">
+          <div class="card-favicon">${favicon}</div>
+          <div class="card-title-group">
+            <div class="card-title" title="${escapeHtml(tab.title)}">${escapeHtml(tab.title)}</div>
+            <a class="card-url" href="${escapeHtml(tab.url)}" target="_blank" title="${escapeHtml(tab.url)}">
+              ${truncateUrl(tab.url)}
+            </a>
+          </div>
+        </div>
+        <div class="card-meta">
           <span class="category-badge">${escapeHtml(tab.category)}</span>
-        </td>
-        <td class="description-cell">${escapeHtml(tab.description || '')}</td>
-        <td class="date-cell">${date}</td>
-        <td class="actions-cell">
-          <button class="btn-edit" data-id="${tab.id}">Edit</button>
-          <button class="btn-delete" data-id="${tab.id}">Delete</button>
-          <button class="btn-open" data-url="${escapeHtml(tab.url)}">Open</button>
-        </td>
-      </tr>
+          <span class="card-date">${date}</span>
+        </div>
+        ${description}
+        <div class="card-actions">
+          <button class="btn-open" data-url="${escapeHtml(tab.url)}" title="Open in new tab">Open</button>
+          <button class="btn-edit" data-id="${tab.id}" title="Edit category & description">Edit</button>
+          <button class="btn-delete" data-id="${tab.id}" title="Remove this tab">Delete</button>
+        </div>
+      </div>
     `;
   }).join('');
 
@@ -84,10 +145,20 @@ function setupEventListeners() {
   document.getElementById('saveCurrentTab').addEventListener('click', handleSaveCurrentTab);
 
   // Search functionality
-  document.getElementById('searchInput').addEventListener('input', handleSearch);
+  document.getElementById('searchInput').addEventListener('input', () => applyFiltersAndRender());
 
   // Category filter
-  document.getElementById('categoryFilter').addEventListener('change', handleCategoryFilter);
+  document.getElementById('categoryFilter').addEventListener('change', () => applyFiltersAndRender());
+
+  // Sort
+  document.getElementById('sortSelect').addEventListener('change', (e) => {
+    currentSort = e.target.value;
+    applyFiltersAndRender();
+  });
+
+  // View toggle
+  document.getElementById('viewGrid').addEventListener('click', () => setView('grid'));
+  document.getElementById('viewList').addEventListener('click', () => setView('list'));
 
   // Modal controls
   document.querySelector('.close').addEventListener('click', closeModal);
@@ -101,30 +172,45 @@ function setupEventListeners() {
       closeModal();
     }
   });
-}
 
-// Handle search
-function handleSearch(event) {
-  const searchTerm = event.target.value.toLowerCase();
-  const categoryFilter = document.getElementById('categoryFilter').value;
-
-  let filteredTabs = savedTabs.filter(tab => {
-    const matchesSearch = tab.title.toLowerCase().includes(searchTerm) ||
-                         tab.url.toLowerCase().includes(searchTerm) ||
-                         tab.description.toLowerCase().includes(searchTerm);
-
-    const matchesCategory = categoryFilter === 'all' || tab.category === categoryFilter;
-
-    return matchesSearch && matchesCategory;
+  // Close modal with Escape key
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeModal();
+    }
   });
-
-  renderTabs(filteredTabs);
 }
 
-// Handle category filter
+// Set view mode
+function setView(view) {
+  currentView = view;
+  const container = document.getElementById('tabsContainer');
+  const gridBtn = document.getElementById('viewGrid');
+  const listBtn = document.getElementById('viewList');
+
+  if (view === 'list') {
+    container.classList.add('list-view');
+    gridBtn.classList.remove('active');
+    gridBtn.setAttribute('aria-pressed', 'false');
+    listBtn.classList.add('active');
+    listBtn.setAttribute('aria-pressed', 'true');
+  } else {
+    container.classList.remove('list-view');
+    gridBtn.classList.add('active');
+    gridBtn.setAttribute('aria-pressed', 'true');
+    listBtn.classList.remove('active');
+    listBtn.setAttribute('aria-pressed', 'false');
+  }
+}
+
+// Handle search (kept for compatibility)
+function handleSearch(event) {
+  applyFiltersAndRender();
+}
+
+// Handle category filter (kept for compatibility)
 function handleCategoryFilter(event) {
-  const searchInput = document.getElementById('searchInput');
-  searchInput.dispatchEvent(new Event('input'));
+  applyFiltersAndRender();
 }
 
 // Update category filter dropdown
@@ -135,7 +221,7 @@ function updateCategoryFilter() {
   const currentValue = categoryFilter.value;
   categoryFilter.innerHTML = '<option value="all">All Categories</option>';
 
-  categories.forEach(category => {
+  categories.sort().forEach(category => {
     const option = document.createElement('option');
     option.value = category;
     option.textContent = category;
@@ -155,6 +241,7 @@ function handleEdit(event) {
     document.getElementById('editCategory').value = tab.category;
     document.getElementById('editDescription').value = tab.description || '';
     document.getElementById('editModal').style.display = 'block';
+    document.getElementById('editCategory').focus();
   }
 }
 
@@ -172,11 +259,13 @@ async function handleSaveEdit(event) {
 
     try {
       await chrome.storage.local.set({ savedTabs: savedTabs });
-      renderTabs(savedTabs);
+      applyFiltersAndRender();
       updateCategoryFilter();
       closeModal();
+      showToast('Tab updated', 'success');
     } catch (error) {
       console.error('Error saving tab:', error);
+      showToast('Failed to save changes', 'error');
     }
   }
 }
@@ -196,10 +285,12 @@ async function handleDelete(event) {
 
     try {
       await chrome.storage.local.set({ savedTabs: savedTabs });
-      renderTabs(savedTabs);
+      applyFiltersAndRender();
       updateCategoryFilter();
+      showToast('Tab deleted', 'success');
     } catch (error) {
       console.error('Error deleting tab:', error);
+      showToast('Failed to delete tab', 'error');
     }
   }
 }
@@ -242,34 +333,29 @@ async function handleSaveCurrentTab() {
 
     // Update local state and re-render
     savedTabs = tabs;
-    renderTabs(savedTabs);
+    applyFiltersAndRender();
     updateCategoryFilter();
 
-    // Show visual feedback
-    const button = document.getElementById('saveCurrentTab');
-    const originalText = button.innerHTML;
-    button.innerHTML = '✅ Saved!';
-    button.style.background = '#4CAF50';
-
-    setTimeout(() => {
-      button.innerHTML = originalText;
-      button.style.background = '';
-    }, 2000);
+    showToast('Tab saved successfully', 'success');
 
   } catch (error) {
     console.error('Error saving current tab:', error);
-
-    // Show error feedback
-    const button = document.getElementById('saveCurrentTab');
-    const originalText = button.innerHTML;
-    button.innerHTML = '❌ Error';
-    button.style.background = '#f44336';
-
-    setTimeout(() => {
-      button.innerHTML = originalText;
-      button.style.background = '';
-    }, 2000);
+    showToast('Failed to save tab', 'error');
   }
+}
+
+// Show toast notification
+function showToast(message, type) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('toast-exit');
+    toast.addEventListener('animationend', () => toast.remove());
+  }, 2500);
 }
 
 // Utility functions
@@ -281,16 +367,16 @@ function escapeHtml(text) {
 
 function truncateUrl(url) {
   if (url.length > 50) {
-    return url.substring(0, 50) + '...';
+    return escapeHtml(url.substring(0, 50) + '...');
   }
-  return url;
+  return escapeHtml(url);
 }
 
 // Listen for storage changes (in case tabs are added while dashboard is open)
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === 'local' && changes.savedTabs) {
     savedTabs = changes.savedTabs.newValue || [];
-    renderTabs(savedTabs);
+    applyFiltersAndRender();
     updateCategoryFilter();
   }
 });
