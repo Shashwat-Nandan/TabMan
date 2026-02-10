@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "TabMan - Multi Tab Manager",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Manage and organize your browser tabs with categories and descriptions",
   "permissions": [
     "contextMenus",

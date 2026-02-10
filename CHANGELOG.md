@@ -2,6 +2,14 @@
 
 All notable changes to the TabMan Chrome Extension will be documented in this file.
 
+## [1.2.0] - 2026-02-10
+
+### Enhanced
+- **UI Overhaul**: Complete redesign of the dashboard for a more modern and intuitive experience.
+- **Styling**: Updated `styles.css` with improved gradients, spacing, and responsive layout.
+- **Performance**: Refactored `dashboard.js` for smoother interactions and better state management.
+- **Usability**: Improved empty state messaging and clear "Save Current Tab" actions.
+
 ## [1.1.0] - 2025-10-25
 
 ### Added - Universal Tab Support
